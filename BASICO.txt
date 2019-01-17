@@ -1,0 +1,45 @@
+#Crear un proyecto en maven de forma sencilla
+-->Este crea un proyeto que no es para WEB
+mvn archetype:generate -DgroupId=org.pdsw.pbt -DartifactId=PropertyBasedTesting \
+   -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+-->Este crea un proyeto que es para WEB
+mvn archetype:generate -DgroupId=org.pdsw.pbt -DartifactId=PropertyBasedTesting \
+   -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
+
+
+#ESTE ES EL LINK PARA LAS DEPENDENCIAS
+https://www.mvnrepository.com/
+-->SIEMPRE USAR LA VERSION QUE SEA MAS USADA O LA QUE TENGA MAS CALIFICACION
+-->Colocar JUNIT la version 4.12
+-->QuickTheories la version mas actualizada
+
+#Este permite para actualizar a java 8
+<properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+</properties>
+
+
+-->Ejecutar un archivo con un main sin JAR
+mvn exec:java -Dexec.mainClass="org.pdsw.pbt.App"
+
+-->Ejecutar un archivo con un main JAR
+ java -cp target/my-app-1.0-SNAPSHOT.jar org.pdsw.pbt.App 
+
+
+
+
+mvn archetype:generate -DgroupId=org.pdsw.pbt.registry -DartifactId=Registraduria \
+   -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+
+
+
+
+#Aqui estan algunas librerias de quicktheories
+
+import org.junit.Test;
+import org.pdsw.pbt.PBTClassifier;
+import static org.quicktheories.QuickTheory.qt;
+import static org.quicktheories.generators.SourceDSL.*;

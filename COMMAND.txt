@@ -1,0 +1,6 @@
+#Comandos
+mvn package -->Permite compilacion
+mvn -U package -->Permite compilacion actualizando las dependencias
+mvn verify --> Permite verificar si todo esta bien instalado
+
+

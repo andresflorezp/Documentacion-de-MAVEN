@@ -1,0 +1,69 @@
+//Estas son las librerias base
+import static org.quicktheories.QuickTheory.qt;
+import static org.quicktheories.generators.SourceDSL.*;
+
+
+
+//COMPLETAS
+
+import static org.quicktheories.QuickTheory.qt;
+import static org.quicktheories.generators.Generate.*;
+
+public class SomeTests {
+
+  @Test//Esto debe ir para que java sepa que es un test
+  public void addingTwoPositiveIntegersAlwaysGivesAPositiveInteger(){
+    qt()
+    .forAll(integers().allPositive()
+          , integers().allPositive())//El numero de parametros me muestra con cuantas variables voy a iterar en el check
+    .check((i,j) -> i + j > 0);//Esta funcion lambda se puede corta o compleja es decir mas grande
+  }
+
+}
+
+
+
+
+//OTRA FORMA DE IMPLEMENTAR SIN IMPORTACIONES ESTATICAS ES con implement
+public class SomeTests implements WithQuickTheories {
+
+  @Test
+  public void addingTwoPositiveIntegersAlwaysGivesAPositiveInteger(){
+    qt()
+    .forAll(integers().allPositive()
+          , integers().allPositive())
+    .check((i,j) -> i + j > 0); 
+  }
+
+}
+
+
+
+//Para crear generadores se puede hacer con .as creando la instancia y luego con check darle un nuevo valor a la variable
+y pues esa variable va a tener todos los metodos de la instancia que se crea anteriormente de la siguiente forma
+  @Test
+  public void someTheoryOrOther(){
+    qt()
+    .forAll(integers().allPositive()
+          , integers().allPositive())
+    .as( (width,height) -> new Widget(width,height) ) // <-- convert to our own type here
+    .check( widget -> widget.isValid());
+  }
+
+
+//En lo anterior no puedo usar las variables width y height para ello usamos asWithPrecursor ademas esto nos permite 
+//hacer un toString para ver los casos en que la propiedad fue falsa
+  @Test
+  public void someTheoryOrOther(){
+     qt()
+    .forAll(integers().allPositive()
+          , integers().allPositive())
+    .asWithPrecursor( (width,height) -> new Widget(width,height) )
+    .check( (width,height,widget) -> widget.size() > width * height ); 
+  }
+
+
+
+//Los generadores
+import static org.quicktheories.generators.SourceDSL.*;-->Este solo llama a uno que es el DSL
+import static org.quicktheories.generators.Generate.*;-->Este los llama a todos

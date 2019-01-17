@@ -1,0 +1,1253 @@
+------------------------------------------------------- Comandos ------------------------------------------------------- 
+
+----------------------------------------------para la version.
+
+..............................................[  mvn --version  ]
+
+---------------------------------------------- Para crear un archetype
+
+..... [ mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false ]
+
+
+------------------------------------------------------- ------------------------------------------------------- 
+
+Si acaba de instalar Maven, puede tardar un tiempo en la primera manga. Esto se debe a Maven está descargando los artefactos más recientes (frascos plugins y otros archivos) en su repositorio local. También puede ser necesario para ejecutar la orden de un par de veces antes de que lo consiga. Esto se debe a que el servidor remoto puede tiempo de espera antes de que las descargas se han completado. No te preocupes, hay maneras de arreglar eso.
+
+Usted se dará cuenta que el objetivo generar crea un directorio con el mismo nombre que el artifactId. Cambie a ese directorio.
+
+
+
+----------------------------------------------  para ver el proyecto 
+
+...............................................[ cd my-app ]
+
+
+
+---------------------------------------------- Resultado 
+
+my-app
+|-- pom.xml
+`-- src
+    |-- main
+    |   `-- java
+    |       `-- com
+    |           `-- mycompany
+    |               `-- app
+    |                   `-- App.java
+    `-- test
+        `-- java
+            `-- com
+                `-- mycompany
+                    `-- app
+                        `-- AppTest.java
+
+
+_____________________________________________________________________________________________
+
+El directorio src / main / java contiene el código fuente del proyecto, el directorio src / test / java contiene la fuente de prueba, y el archivo pom.xml es modelo de objetos de proyecto del proyecto, o POM.
+
+------------------------------------------------ The POM
+
+El archivo pom.xml es el núcleo de la configuración de un proyecto Maven. Se trata de un archivo de configuración que contiene la mayor parte de la información necesaria para construir un proyecto en la forma que desee. El POM es enorme y puede ser desalentador en su complejidad, pero no es necesario entender todas las complejidades todavía utilizarla de manera eficaz. POM de este proyecto es:
+
+------------------------------------------------------------------------------------------------ 
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>         ------ grupo o direccion del artefacto
+  <artifactId>my-app</artifactId>              ----- nombre o id del artefacto
+  <version>1.0-SNAPSHOT</version>              ----- version 
+  <packaging>jar</packaging>                   ------  tipo de paquete en el cual se empaquetara el archivo al finalizar el proceso
+
+  <name>Maven Quick Start Archetype</name>     
+  <url>http://maven.apache.org</url>
+
+  <dependencies>                              ------  contenedor de dependencias
+    <dependency>                              ------  abre el inicio de una dependencia
+      <groupId>junit</groupId>                ------ grupo de la dependencia
+      <artifactId>junit</artifactId>          ------ ide el artefacto
+      <version>4.8.2</version>                ------ versiond el artefacto
+      <scope>test</scope>                    ------  tipo de ejecuciiond el artefacto  , compile , runtime , test   etc 
+    </dependency>
+  </dependencies>
+</project>
+
+------------------------------------------------------------------------------------------------ 
+
+
+-----------------------------------------------Buid Proyect (Build the Project)
+
+...............................................[ mvn package ]
+
+-----------------------------------------------Resultado
+
+ ...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2 seconds
+[INFO] Finished at: Thu Jul 07 21:34:52 CEST 2011
+[INFO] Final Memory: 3M/6M
+[INFO] ------------------------------------------------------------------------
+
+----------------------------------------------- ----------------------------------------------- 
+
+A diferencia de la primera orden ejecutada (arquetipo: generar) es posible que observe que el segundo es simplemente una sola palabra - package. En lugar de un objetivo, esto es una fase. Una fase es un paso en la construcción del ciclo de vida, que es una secuencia ordenada de fases. Cuando se da una fase, Maven ejecutar todas las fases en la secuencia hasta e incluyendo la definida. Por ejemplo, si se ejecuta la fase de compilación, las fases que actualmente se ejecutan son:
+
+    1.- validar
+    2.- generar los resources 
+    3.- proceso de los resources 
+    4.- generar resources -
+    5.- procesos de resources 
+    6.- compilar
+
+
+    1.- validate
+    2.- generate-sources
+    3.- process-sources
+    4.- generate-resources
+    5.- process-resources
+    6.- compile
+
+
+----------------------------------------------------- Comando Probar jar 
+
+Usted puede probar el JAR recién compilado y empaquetado con el siguiente comando:
+
+
+
+.................................[ java -cp target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App ]
+
+------------------------------------------------------ Resultado
+
+Hello World!
+
+--------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------Running Maven Tools 
+
+Fases Maven
+
+Aunque apenas una lista completa, estas son las fases del ciclo de vida por defecto más comunes ejecutadas.
+
+     [validate] : validar el proyecto es correcta y toda la información necesaria está disponible
+     [compile]: compilar el código fuente del proyecto
+     [test] : comprobar el código fuente compilado utilizando un marco de pruebas unitarias adecuadas. Estas pruebas no deben requerir el código puede empaquetar o desplegado
+     [package] : tomar el código compilado y empaquetarlo en su formato distribuible, como un JAR.
+     [integration-test] : el proceso e implementar el paquete si es necesario en un entorno donde las pruebas de integración se pueden ejecutar
+     [verify]: ejecutar los controles para verificar el paquete es válido y cumple con los criterios de calidad
+     [install]: instalar el paquete en el repositorio local, para su uso como una dependencia en otros proyectos a nivel local
+     [deploy]: hecho en un entorno de integración o liberación, copia el paquete final al repositorio remoto para compartir con otros desarrolladores y proyectos.
+
+Hay otros dos ciclos de vida de Maven nota más allá de la lista por defecto de arriba. ellos son
+
+     [clean]: limpia los artefactos creados por versiones anteriores
+
+     [site]: genera la documentación del sitio para este proyecto
+
+Fases están ocupadas con los objetivos subyacentes. Los objetivos específicos ejecutados por fase depende del tipo de envasado del proyecto. Por ejemplo, el paquete se ejecuta jar: Tarro de si el tipo de proyecto es un JAR, y la war , la war si el tipo de proyecto es que - usted lo adivinó - un WAR.
+
+Una cosa interesante a destacar es que las fases y objetivos pueden ser ejecutadas de forma secuencial.
+
+-----------------------------------------------------------------------------------------
+
+
+------------------------------------------------- Comando en secuencia
+
+
+.........................[ mvn clean dependency:copy-dependencies package ]
+
+Este comando va a limpiar el proyecto, las dependencias de copia, y el paquete del proyecto (ejecución de todas las fases hasta paquete, por supuesto).
+
+........................ 
+
+ -------------------------------------------------Generating the Site
+
+..................................................[ mvn site ]
+
+
+
+------------------------------------------------------------ Tutorial basico
+
+1.- Que es maven 
+
+A primera vista Maven puede parecer muchas cosas, pero en pocas palabras Maven es un intento de aplicar patrones para construir la infraestructura de un proyecto con el fin de promover la comprensión y la productividad al proporcionar un camino claro en el uso de las mejores prácticas. Maven es básicamente una herramienta de gestión y comprensión del proyecto y, como tal, ofrece una manera de ayudar a la gestión de:
+
+     construye
+     documentación
+     Reporting
+     Dependencias
+     SCM
+     Ediciones
+     distribución
+
+Si desea mas información acerca de Maven se puede extraer la filosofía de Maven y La Historia de Maven. Ahora vamos a pasar a la forma en que usted, el usuario, puede beneficiarse del uso de Maven.
+
+
+2.- ¿Cómo puede beneficiar a mi Maven proceso de desarrollo?
+
+Maven puede proporcionar beneficios para su proceso de construcción mediante el empleo de las convenciones y prácticas estándar para acelerar el ciclo de desarrollo y al mismo tiempo ayudando a lograr una mayor tasa de éxito. Para una visión más detallada de cómo Maven puede ayudarle con su proceso de desarrollo, consulte Las ventajas de usar Maven.
+
+Ahora que hemos cubierto un poco de la historia y el propósito de Maven vamos a entrar en algunos ejemplos reales de conseguir que la puesta en marcha con Maven!
+
+3.- ¿Cómo puedo configurar Maven?
+
+Los valores predeterminados para Maven suelen ser suficientes, pero si tiene que cambiar la ubicación de la caché o están detrás de un proxy HTTP, necesitará crear configuración. Consulte la Guía de Configuración de Maven para más información.
+
+
+4.- ¿Cómo puedo hacer mi primer proyecto Maven?
+
+Vamos a saltar de cabeza en la creación de su primer proyecto Maven! Para crear nuestro primer proyecto Maven vamos a utilizar el mecanismo arquetipo de Maven. Un arquetipo es definido como un patrón o modelo original de la que están hechas todas las cosas de la misma clase. En Maven, un arquetipo es una plantilla de un proyecto que se combina con un poco de la entrada del usuario para producir un proyecto Maven de trabajo que ha sido adaptado a las necesidades del usuario. Vamos a mostrar cómo el mecanismo arquetipo funciona ahora, pero si usted desea saber más acerca de los arquetipos por favor consulte nuestra introducción a arquetipos.
+
+En la creación de su primer proyecto! Con el fin de crear el más simple de los proyectos de Maven, ejecute lo siguiente desde la línea de comandos:
+
+
+
+--------------------------------------------------- Comando generar aqruetipo 
+
+mvn archetype:generate \
+  -DarchetypeGroupId=org.apache.maven.archetypes \
+  -DgroupId=com.mycompany.app \
+  -DartifactId=my-app
+
+Una vez ejecutado este comando, se dará cuenta de algunas cosas que han sucedido. En primer lugar, se dará cuenta de que un directorio llamado mi-app ha sido creada para el nuevo proyecto, y este directorio contiene un archivo llamado pom.xml que debería tener este aspecto:
+
+
+---------------------------------------------------  Asi se ve un pom
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+
+---------------------------------------------------
+
+
+
+pom.xml contiene el modelo de objetos del proyecto (POM) para este proyecto. El POM es la unidad básica de trabajo en Maven. Esto es importante de recordar, porque Maven es inherentemente proyecto centrado en el que todo gira en torno a la idea de un proyecto. En resumen, el POM contiene cada pieza de información importante acerca de su proyecto y es esencialmente una ventanilla única para encontrar todo lo relacionado con su proyecto. Comprender el POM es importante y se recomienda a los nuevos usuarios a consultar la Introducción al POM.
+
+
+Esta es una muy simple POM pero todavía muestra los elementos clave cada POM contiene, así que vamos a caminar a través de cada uno de ellos para que se familiarice con los elementos esenciales POM:
+
+    project  : Este es el elemento de nivel superior en todos los archivos de Maven pom.xml.
+
+    modelVersion : Este elemento indica la versión del modelo de objetos está usando este POM. La versión del modelo en sí mismo cambia muy poco frecuente, pero es obligatoria a fin de garantizar la estabilidad del empleo, siempre y cuando los desarrolladores de Maven consideró necesario cambiar el modelo.
+
+    groupId : Este elemento indica el identificador único de la organización o grupo que creó el proyecto. El groupId es uno de los identificadores de clave de un proyecto y se basa normalmente en el nombre de dominio completo de su organización. Por ejemplo, es la Firma org.apache.maven.plugins groupId designado para todos Maven plug-ins.
+
+    artifactId : Este elemento indica el nombre de la base única del artefacto principal que se genera por este proyecto. El artefacto primaria para un proyecto es típicamente un archivo JAR. Artefactos secundarios como paquetes fuente también utilizan el artifactId como parte de su nombre definitivo. Un artefacto típico producido por Maven tendría la forma <artifactId> -. <versión> <extensión> (Por ejemplo, miaplicacion-1.0.jar).
+
+    packaging: Este elemento indica el tipo de paquete que utilizará este artefacto (por ejemplo JAR, WAR, EAR, etc.) Esto no sólo significa que si el artefacto producido es JAR, WAR o EAR, pero también puede indicar un ciclo de vida específico para usarlo como parte del proceso de construcción. (El ciclo de vida es un tema que trataremos más adelante en la guía. Por ahora, sólo tener en cuenta que el embalaje indicado de un proyecto puede desempeñar un papel en la personalización de la construcción del ciclo de vida.) El valor predeterminado para el elemento de embalaje es JAR por lo que no tiene que especificarlo en la mayoría de los proyectos.
+
+    version : Este elemento de versión indica la versión del artefacto generado por el proyecto. Maven va un largo camino para ayudarle con la gestión de versiones y que a menudo ver el designador INSTANTÁNEA en una versión, lo que indica que el proyecto se encuentra en un estado de desarrollo. Vamos a discutir el uso de las instantáneas y su funcionamiento más adelante en esta guía.
+
+    name : Este elemento indica usa el nombre para el proyecto. Esto se utiliza a menudo en la documentación generada de Maven.
+
+    url : Este elemento indica que el sitio del proyecto se puede encontrar. Esto se utiliza a menudo en la documentación generada de Maven.
+
+    description : Este elemento proporciona una descripción básica de su proyecto. Esto se utiliza a menudo en la documentación generada de Maven.
+
+Para una referencia completa de los elementos que están disponibles para su uso en el POM consulte nuestra referencia POM. Ahora volvamos al proyecto en cuestión.
+
+Después de la generación arquetipo de su primer proyecto en el que también se dará cuenta de que la estructura de directorios se ha creado:
+
+______________________________________________________________________________________________________________________________________________
+
+
+my-app
+|-- pom.xml
+`-- src
+    |-- main
+    |   `-- java
+    |       `-- com
+    |           `-- mycompany
+    |               `-- app
+    |                   `-- App.java
+    `-- test
+        `-- java
+            `-- com
+                `-- mycompany
+                    `-- app
+                        `-- AppTest.java
+
+______________________________________________________________________________________________________________________________________________
+
+
+Como puede ver, el proyecto creado a partir del arquetipo tiene un POM, un árbol de código fuente para las fuentes de la aplicación y un árbol de origen de sus fuentes de prueba. Ésta es la disposición estándar para proyectos de Maven (las fuentes de aplicaciones residen en $ {basedir} / src / main / java y las fuentes de prueba residen en $ {basedir} / src / test / java, donde $ {basedir} representa el directorio que contiene pom . xml).
+
+Si se va a crear un proyecto Maven a mano esta es la estructura de directorios que se recomienda utilizar. Esta es una convención Maven y para aprender más sobre él se puede leer nuestra introducción al Diseño del directorio estándar.
+
+Ahora que tenemos un POM, algunas fuentes de la aplicación, y algunas fuentes de prueba que probablemente se estará preguntando ...
+
+______________________________________________________________________________________________________________________________________________
+
+
+Para crear un nuevo proyecto basado en un arquetipo, es necesario llamar a mvn arquetipo: generar meta, como la siguiente:
+
+
+-...........................[ mvn archetype:generate]
+
+
+5.- ¿Cómo puedo compilar mis fuentes de aplicaciones?
+
+Cambie al directorio donde pom.xml se crea arquetipo: generar y ejecutar el comando siguiente para compilar las fuentes de aplicaciones:
+
+
+
+-------------------------------------[ mvn compile ]
+
+...................................... Resultado
+
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Maven Quick Start Archetype
+[INFO]    task-segment: [compile]
+[INFO] ----------------------------------------------------------------------------
+[INFO] artifact org.apache.maven.plugins:maven-resources-plugin: \
+  checking for updates from central
+...
+[INFO] artifact org.apache.maven.plugins:maven-compiler-plugin: \
+  checking for updates from central
+...
+[INFO] [resources:resources]
+...
+[INFO] [compiler:compile]
+Compiling 1 source file to <dir>/my-app/target/classes
+[INFO] ----------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ----------------------------------------------------------------------------
+[INFO] Total time: 3 minutes 54 seconds
+[INFO] Finished at: Fri Sep 23 15:48:34 GMT-05:00 2005
+[INFO] Final Memory: 2M/6M
+[INFO] ----------------------------------------------------------------------------
+
+
+a primera vez que se ejecuta este (o cualquier otro) comandos, Maven tendrá que descargar todos los plugins y dependencias afines que necesita para cumplir con la orden. A partir de una instalación limpia de Maven, esto puede tomar un buen tiempo (en la salida anterior, que tomó cerca de 4 minutos). Si se ejecuta el comando, Maven ahora tiene lo que se necesita, por lo que no tendrá que descargar nada nuevo y será capaz de ejecutar el comando con mucha más rapidez.
+
+Como se puede ver en la salida, se colocaron las clases compiladas en $ {basedir} / target / classes, que es otra convención estándar empleado por Maven. Así que, si eres un buen observador, te darás cuenta de que al utilizar las convenciones estándar, el POM arriba es muy pequeño y no se ha tenido que decirle a Maven explícitamente en ninguna de sus fuentes son o donde la salida debe ir. Siguiendo las convenciones Maven estándar, se puede hacer mucho con muy poco esfuerzo! Así como una comparación casual, echemos un vistazo a lo que podría haber tenido que ver en la hormiga para lograr lo mismo.
+
+Ahora, esto es simplemente compilar un solo árbol de las fuentes de la aplicación y la secuencia de comandos Ant muestra es más o menos el mismo tamaño que el POM se muestra arriba. Pero vamos a ver cuánto más podemos hacer con POM así de simple!
+
+
+6.- ¿Cómo puedo compilar mis fuentes de prueba y ejecutar mis pruebas unitarias?
+
+Ahora estás compilando con éxito las fuentes de su aplicación y ahora tienes algunas pruebas de unidad que desee para compilar y ejecutar (porque todos los programadores siempre escribe y ejecuta las pruebas unitarias * codazo codazo guiño guiño *).
+
+Ejecute el siguiente comando:
+
+.....................[ mvn test ]
+
+
+---------------------------------------------Resultado
+
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Maven Quick Start Archetype
+[INFO]    task-segment: [test]
+[INFO] ----------------------------------------------------------------------------
+[INFO] artifact org.apache.maven.plugins:maven-surefire-plugin: \
+  checking for updates from central
+...
+[INFO] [resources:resources]
+[INFO] [compiler:compile]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [resources:testResources]
+[INFO] [compiler:testCompile]
+Compiling 1 source file to C:\Test\Maven2\test\my-app\target\test-classes
+...
+[INFO] [surefire:test]
+[INFO] Setting reports dir: C:\Test\Maven2\test\my-app\target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+[surefire] Running com.mycompany.app.AppTest
+[surefire] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0 sec
+
+Results :
+[surefire] Tests run: 1, Failures: 0, Errors: 0
+
+[INFO] ----------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ----------------------------------------------------------------------------
+[INFO] Total time: 15 seconds
+[INFO] Finished at: Thu Oct 06 08:12:17 MDT 2005
+[INFO] Final Memory: 2M/8M
+[INFO] ----------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Algunas cosas a destacar acerca de la salida:
+
+     Maven descarga más dependencias en esta ocasión. Estas son las dependencias y plugins necesarios para la ejecución de las pruebas (que ya cuenta con las dependencias que necesita para compilar y no descargar de nuevo).
+     Antes de compilar y ejecutar las pruebas de Maven compila el código principal (todas estas clases están al día porque no hemos cambiado nada desde que se compiló pasado).
+
+Si simplemente quieres compilar las fuentes de prueba (pero no ejecutar las pruebas), puede ejecutar lo siguiente:
+
+
+----------------------------------[ mvn test-compile ]
+
+
+
+Ahora que se puede compilar sus fuentes de aplicaciones, compilar sus pruebas, y ejecutar las pruebas, tendrá que pasar a la siguiente paso lógico para que usted se pregunte ...
+
+ 7.- ¿Cómo puedo crear un JAR e instalarlo en mi repositorio local?
+
+
+Confección de un archivo JAR es sencillo lo suficiente y se puede lograr mediante la ejecución del siguiente comando
+
+--------------------------------------[ mvn package ]
+
+
+Si usted echa un vistazo a la POM para su proyecto en el que se dará cuenta el elemento de embalaje se establece en jar. Así es como conoce a Maven para generar un archivo JAR del comando anterior (hablaremos más sobre esto más adelante). Ahora puede echar un vistazo en el directorio $ {basedir} / target y verá el archivo JAR generado.
+
+Ahora usted desea instalar el artefacto que ha generado (el archivo JAR) en tu repositorio local (~ / .m2/repository es la ubicación predeterminada). Para obtener más información sobre los repositorios se puede hacer referencia a nuestra Introducción a repositorios pero vamos a pasar a la instalación de nuestro artefacto! Para ello ejecute el comando siguiente:
+
+-----------------------------  [ mvn install ]
+
+
+.........................................[resultado]
+
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Maven Quick Start Archetype
+[INFO]    task-segment: [install]
+[INFO] ----------------------------------------------------------------------------
+[INFO] [resources:resources]
+[INFO] [compiler:compile]
+Compiling 1 source file to <dir>/my-app/target/classes
+[INFO] [resources:testResources]
+[INFO] [compiler:testCompile]
+Compiling 1 source file to <dir>/my-app/target/test-classes
+[INFO] [surefire:test]
+[INFO] Setting reports dir: <dir>/my-app/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+[surefire] Running com.mycompany.app.AppTest
+[surefire] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+
+Results :
+[surefire] Tests run: 1, Failures: 0, Errors: 0
+
+[INFO] [jar:jar]
+[INFO] Building jar: <dir>/my-app/target/my-app-1.0-SNAPSHOT.jar
+[INFO] [install:install]
+[INFO] Installing <dir>/my-app/target/my-app-1.0-SNAPSHOT.jar to \
+   <local-repository>/com/mycompany/app/my-app/1.0-SNAPSHOT/my-app-1.0-SNAPSHOT.jar
+[INFO] ----------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ----------------------------------------------------------------------------
+[INFO] Total time: 5 seconds
+[INFO] Finished at: Tue Oct 04 13:20:32 GMT-05:00 2005
+[INFO] Final Memory: 3M/8M
+[INFO] ----------------------------------------------------------------------------
+
+
+.......................................................................................................
+
+
+Tenga en cuenta que el plugin segura (que ejecuta la prueba) busca pruebas contenidas en archivos con una convención de nomenclatura particular. Por defecto, las pruebas que se incluyen son:
+
+
+    **/*Test.java
+    **/Test*.java
+    **/*TestCase.java
+
+
+Y los excluye por defecto son:
+
+
+
+    **/Abstract*Test.java
+    **/Abstract*TestCase.java
+
+
+
+Usted ha caminado a través del proceso de la creación, construcción, pruebas, embalaje, y la instalación de un proyecto típico de Maven. Es probable que la gran mayoría de lo que van a hacer proyectos con Maven y si te has dado cuenta, todo lo que has sido capaz de hacer hasta este punto ha sido impulsado por un archivo de 18-line, es decir, el modelo de proyecto o POM. Si nos fijamos en una hormiga típica construcción de archivo que proporciona la misma funcionalidad que hemos logrado hasta el momento te darás cuenta de que ya es el doble del tamaño del POM y nos acaba de empezar! Hay mucha más funcionalidad a su disposición desde Maven sin necesidad de adiciones a nuestro POM en su estado actual. Para obtener más funcionalidad de nuestro ejemplo de archivo de generación Ant debe seguir haciendo adiciones propensos a errores.
+
+Entonces, ¿qué más se puede obtener de forma gratuita? Hay un gran número de Maven plug-ins que trabajar fuera de la caja con incluso una simple POM que tenemos arriba. Vamos a hablar de uno aquí específicamente, ya que es una de las características muy apreciadas de Maven: sin ningún esfuerzo por su parte este POM tiene suficiente información para generar un sitio web para su proyecto! Es muy probable que desee personalizar su sitio Maven, pero si usted está presionado por el tiempo todo lo que necesita hacer es proporcionar información básica acerca de su proyecto es ejecutar el siguiente comando:
+
+
+
+--------------- [ mvn site ]
+
+
+Hay un montón de otras metas independientes que pueden ser ejecutados, así, por ejemplo:
+
+---------------- [ mvn clean ]
+
+
+Esto eliminará el directorio de destino con todos los datos de construcción antes de comenzar para que esté fresco.
+
+Tal vez desea generar un descriptor eclipse para el proyecto?
+
+
+---------------------- [ mvn eclipse:eclipse ] 
+
+algunos objetivos conocidos de Maven 1.0 están todavía allí - como jar: jar, pero no pueden comportarse como era de esperar. En la actualidad, jar: jar no recompilar las fuentes - que simplemente crear un JAR de la meta / directorio de clases, bajo el supuesto de que todo el mundo ya se había hecho.
+
+
+ 8.- ¿Cómo puedo utilizar plug-ins?
+
+Cada vez que desee personalizar la construcción de un proyecto Maven, esto se hace mediante la adición o la reconfiguración de plugins.
+
+Nota para Maven 1.0 Usuarios: En Maven 1.0, habría añadido algo preGoal a maven.xml y algunas entradas a project.properties. Aquí, es un poco diferente.
+
+Para este ejemplo, vamos a configurar el compilador Java para permitir fuentes de JDK 5.0. Esto es tan simple como añadir esto a su POM:
+
+
+-----------------------------------------------------------------------------
+
+...
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>2.5.1</version>
+      <configuration>
+        <source>1.5</source>
+        <target>1.5</target>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+...
+
+-----------------------------------------------------------------------------
+
+Se dará cuenta de que todos los plugins de Maven 2.0 se parecen mucho a una dependencia - y en cierto modo lo son. Este plugin se descargará automáticamente y se utiliza - incluyendo una versión específica si así lo solicita (por defecto es utilizar la última disponible).
+
+El elemento de configuración se aplica a los parámetros dados a cada gol del plugin de compilador. En el caso anterior, el plugin compilador ya se utiliza como parte del proceso de construcción y esto sólo cambia la configuración. También es posible añadir nuevos objetivos para el proceso, y configurar objetivos específicos. Para más información sobre esto, vea la Introducción al Ciclo de Vida de Build.
+
+Para saber lo que es la configuración disponible para un plugin, se puede ver la lista de plugins y navegue hasta el plugin y el objetivo que se utilice. Para obtener información general acerca de cómo configurar los parámetros disponibles de un plugin, echar un vistazo a la Guía de Configuración de Plug-ins.
+
+
+
+9.- ¿Cómo puedo añadir resourcesa mi JAR?
+
+Otro caso de uso común que puede ser satisfecho, que no requiere cambios en el POM que tenemos encima es resources  de embalaje en el archivo JAR. Para esta tarea común, Maven se basa de nuevo en el Diseño del directorio estándar, lo que significa que mediante el uso de las convenciones estándar Maven puede empaquetar resources  dentro JAR simplemente colocando esos resources  en una estructura de directorios estándar.
+
+Que aparece a continuación en nuestro ejemplo hemos añadido el directorio $ {basedir} / src / main / resources en la que ponemos todos los resources  que deseamos empaquetar en nuestro JAR. La regla simple empleado de Maven es la siguiente: los directorios o archivos ubicados dentro de la $ {basedir} / src / main / directorio de resources  se empaquetan en el JAR con la misma estructura exacta a partir de la base de la JAR.
+
+
+my-app
+|-- pom.xml
+`-- src
+    |-- main
+    |   |-- java
+    |   |   `-- com
+    |   |       `-- mycompany
+    |   |           `-- app
+    |   |               `-- App.java
+    |   `-- resources
+    |       `-- META-INF
+    |           `-- application.properties
+    `-- test
+        `-- java
+            `-- com
+                `-- mycompany
+                    `-- app
+                        `-- AppTest.java
+
+
+Así se puede ver en el ejemplo que tenemos un directorio META-INF con un archivo Application.properties dentro de ese directorio. Si ha desempaquetado el archivo JAR que Maven creado para usted y echó un vistazo a lo que se ve lo siguiente:
+
+|-- META-INF
+|   |-- MANIFEST.MF
+|   |-- application.properties
+|   `-- maven
+|       `-- com.mycompany.app
+|           `-- my-app
+|               |-- pom.properties
+|               `-- pom.xml
+`-- com
+    `-- mycompany
+        `-- app
+            `-- App.class
+
+
+Como puede ver, el contenido de $ {basedir} / src / main / resources se pueden encontrar a partir de la base de la JAR y nuestro archivo Application.properties hay en el directorio META-INF. También se dará cuenta de algunos otros archivos allí como META-INF/MANIFEST.MF, así como un archivo pom.xml y pom.properties. Estos vienen de serie con la generación de un JAR en Maven. Usted puede crear su propio manifiesto, si lo desea, pero Maven va a generar uno por defecto si no lo hace. (También puede modificar las entradas en el manifiesto predeterminado. Tocaremos sobre esto más adelante.) Los archivos pom.xml y pom.properties se empaquetan en el JAR para que cada artefacto producido por Maven es auto-describir y también le permite para utilizar los metadatos en su propia aplicación en caso de necesidad. Un uso simple podría ser la de recuperar la versión de la aplicación. Operando en el archivo POM requeriría utilizar algunas utilidades Maven pero las propiedades puede ser utilizado con la API estándar de Java y el siguiente aspecto:
+
+
+#Generated by Maven
+#Tue Oct 04 15:43:21 GMT-05:00 2005
+version=1.0-SNAPSHOT
+groupId=com.mycompany.app
+artifactId=my-app
+
+
+Como puede ver, el contenido de $ {basedir} / src / main / resources se pueden encontrar a partir aPara agregar resources  a la ruta de clases para las pruebas unitarias, usted sigue el mismo patrón que usted hace para agregar resources  al JAR excepto el directorio de colocar los resources  en es ${basedir}/src/test/resources. En este punto, usted tendría una estructura de directorios que se vería como la siguiente:
+
+
+my-app
+|-- pom.xml
+`-- src
+    |-- main
+    |   |-- java
+    |   |   `-- com
+    |   |       `-- mycompany
+    |   |           `-- app
+    |   |               `-- App.java
+    |   `-- resources
+    |       `-- META-INF
+    |           |-- application.properties
+    `-- test
+        |-- java
+        |   `-- com
+        |       `-- mycompany
+        |           `-- app
+        |               `-- AppTest.java
+        `-- resources
+            `-- test.properties
+
+
+En una prueba de unidad que podría utilizar un simple fragmento de código como el siguiente para acceder a los resources  necesarios para el ensayo:
+
+...
+
+// Retrieve resource
+InputStream is = getClass().getResourceAsStream( "/test.properties" );
+
+// Do something with the resource
+
+...
+
+
+¿Cómo filtro los archivos de resources ?
+
+A veces se necesita un archivo de resources  que contiene un valor que sólo puede ser suministrada en tiempo de compilación. Para lograr esto en Maven, poner una referencia a la propiedad que va a contener el valor en el archivo de resources  utilizando la sintaxis${<property name>}. La propiedad puede ser uno de los valores definidos en su pom.xml, un valor definido en settings.xml del usuario, una propiedad definida en un archivo de propiedades externo, o una propiedad del sistema.
+
+Tener resources  filtro Maven al copiar, basta con establecer el filtering en true para el directorio de resources  en tu pom.xml:
+
+-------------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>
+
+
+-------------------------------------------------------------------------------------------------
+
+
+Se dará cuenta de que teníamos que añadir la estructura, los resources  y los elementos de resources  que no estaban allí antes. Además, hemos tenido que declarar explícitamente que los resources  se encuentran en el directorio src / main / resources. Toda esta información fue proporcionada como valores predeterminados anteriormente, pero debido a que el valor por defecto para el filtrado es falsa, tuvimos que añadir esto a nuestra pom.xml con el fin de que se sobrepase el valor por defecto y el conjunto filtrado en true.
+
+Para hacer referencia a una propiedad definida en el pom.xml, el nombre de la propiedad utiliza los nombres de los elementos XML que definen el valor, con "pom" está permitido como un alias para el proyecto (root) del elemento. Así que $ {pom.name} se refiere al nombre del proyecto, $ {pom.version} se refiere a la versión del proyecto, $ {pom.build.finalName} se refiere al nombre final del archivo creado cuando el proyecto integrado se envasa, etc tenga en cuenta que algunos elementos de la POM tienen valores por defecto, así que no es necesario definir explícitamente en su pom.xml de los valores a ser disponible aquí. Del mismo modo, los valores de settings.xml del usuario puede hacer referencia mediante nombres de propiedad que comienzan con "ajustes" (por ejemplo, $ {settings.localRepository} se refiere a la ruta de repositorio local del usuario).
+
+Para continuar con nuestro ejemplo, vamos a añadir un par de propiedades en el archivo Application.properties (que ponemos en el directorio src / main / resources) cuyos valores se suministra cuando se filtra el recurso:
+
+
+# application.properties
+application.name=${pom.name}
+application.version=${pom.version}
+
+
+Con esto en su lugar, puede ejecutar el siguiente comando (proceso-resources  es la fase del ciclo de vida de construcción donde se copian y se filtraron a los medios):
+
+
+-------------------------------[ mvn process-resources ]
+
+y el archivo Application.properties bajo target / classes (y eventualmente entrar en el frasco) se ve así:
+
+
+# application.properties
+application.name=Maven Quick Start Archetype
+application.version=1.0-SNAPSHOT
+
+
+Para hacer referencia a una propiedad definida en un archivo externo, todo lo que tiene que hacer es añadir una referencia a este archivo externo en su pom.xml. En primer lugar, vamos a crear nuestro archivo de propiedades externo y lo llaman src / main / filtros / filter.properties:
+
+# filter.properties
+my.filter.value=hello!
+
+A continuación, vamos a añadir una referencia a este nuevo archivo en el pom.xml:
+
+---------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <filters>
+      <filter>src/main/filters/filter.properties</filter>
+    </filters>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>
+
+---------------------------------------------------------------------------------------------
+
+Entonces, si añadimos una referencia a esta propiedad en el archivo Application.properties:
+
+
+# application.properties
+application.name=${pom.name}
+application.version=${pom.version}
+message=${my.filter.value}
+
+
+la próxima ejecución del comando mvn  process-resources pondrá nuestro nuevo valor de la propiedad en Application.properties. Como alternativa a la definición de la propiedad my.filter.value en un archivo externo, también se podría haber definido en la sección de propiedades de su pom.xml y te gustaría obtener el mismo efecto (nótese que no necesito las referencias a src / main / filtros / filter.properties tampoco):
+
+---------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <properties>
+    <my.filter.value>hello</my.filter.value>
+  </properties>
+</project>
+
+---------------------------------------------------------------------------------------------
+
+
+Filtrado de resources  también puede obtener los valores de las propiedades del sistema, ya sea en las propiedades del sistema incorporado en Java (como java.version o user.home) o las propiedades definidas en la línea de comandos con el parámetro estándar de Java-D. Para continuar con el ejemplo, vamos a cambiar nuestro archivo Application.properties a tener este aspecto:
+
+# application.properties
+java.version=${java.version}
+command.line.prop=${command.line.prop}
+
+Ahora, al ejecutar el siguiente comando (tenga en cuenta la definición de la propiedad command.line.prop en la línea de comandos), el archivo Application.properties contendrá los valores de las propiedades del sistema.
+
+
+
+
+.---------------------- [ mvn process-resources "-Dcommand.line.prop=hello again" ]
+
+
+11.- ¿Cómo utilizo las dependencias externas?
+
+Usted probablemente ha notado un elemento de dependencia en el POM que hemos estado usando como ejemplo. Usted ha hecho, estado usando una dependencia externa de todo este tiempo, pero aquí hablaremos de cómo funciona esto en detalle un poco más. Para una introducción más detallada, por favor consulte nuestra introducción al Mecanismo de Dependencia.
+
+La sección de las dependencias del pom.xml enumera todas las dependencias externas que nuestro proyecto necesita para construir (si es necesario que la dependencia en tiempo de compilación, el tiempo de prueba, tiempo de ejecución, o lo que sea). En este momento, nuestro proyecto está en función de JUnit solamente (Saqué todos los recursos filtrado cosas para mayor claridad):
+
+---------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+
+
+---------------------------------------------------------------------------------------------
+
+
+
+Para cada dependencia externa, tendrá que definir al menos 4 cosas: GroupID, artifactId, versión y ámbito de aplicación. El groupId, artifactId, y la versión son los mismos que los que figuran en el pom.xml para el proyecto que construyó esa dependencia. El elemento de alcance indica cómo su proyecto utiliza esa dependencia, y puede ser valores como compilar, probar y tiempo de ejecución. Para obtener más información acerca de todo lo que puede especificar para una dependencia, consulte el descriptor de referencia del proyecto.
+
+Para obtener más información sobre el mecanismo de la dependencia en su conjunto, vea Introducción al Mecanismo de Dependencia.
+
+Con esta información acerca de una dependencia, Maven será capaz de hacer referencia a la dependencia cuando se genera el proyecto. ¿Dónde referencia a la dependencia de Maven? Maven se ve en tu repositorio local (~ / .m2/repository es la ubicación predeterminada) para encontrar todas las dependencias. En un apartado anterior, se instaló el artefacto de nuestro proyecto (my-app-1.0-SNAPSHOT.jar) en el repositorio local. Una vez instalado allí, otro proyecto puede hacer referencia a ese frasco como una dependencia con sólo añadir la información de la dependencia a su pom.xml:
+
+---------------------------------------------------------------------------------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-other-app</artifactId>
+  ...
+  <dependencies>
+    ...
+    <dependency>
+      <groupId>com.mycompany.app</groupId>
+      <artifactId>my-app</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
+
+
+---------------------------------------------------------------------------------------------
+
+¿Qué pasa con las dependencias construidas en otro lugar? ¿Cómo se meten en mi repositorio local? Cada vez que hace referencia a un proyecto de una dependencia que no está disponible en el repositorio local de Maven descargará la dependencia de un repositorio remoto en el repositorio local. Usted probablemente ha notado Maven descarga de un montón de cosas cuando se construyó su primer proyecto (estas descargas eran dependencias de los distintos plugins utilizados para construir el proyecto). Por defecto, los usos del repositorio Maven remotos se pueden encontrar (y navegado) en http://repo.maven.apache.org/maven2/. También puede configurar su propio repositorio remoto (tal vez un repositorio central para su empresa) para utilizar en lugar de o además del repositorio remoto predeterminado. Para obtener más información sobre los repositorios puede hacer referencia a la introducción de Repositorios.
+
+Vamos a añadir otra dependencia a nuestro proyecto. Digamos que hemos añadido algunos tala del código y es necesario añadir log4j como dependencia. En primer lugar, necesitamos saber cuál es la groupId, artifactId, y la versión son para log4j. Podemos navegar ibiblio y buscarlo, o utilizar Google para ayudar mediante la búsqueda de "site: www.ibiblio.org maven2 log4j". La búsqueda muestra un directorio llamado / maven2/log4j/log4j (o / pub/packages/maven2/log4j/log4j). En ese directorio es un archivo llamado maven-metadata.xml. Esto es lo que el experto-metadata.xml de log4j se ve así:
+
+---------------------------------------------------------------------------------------------
+
+<metadata>
+  <groupId>log4j</groupId>
+  <artifactId>log4j</artifactId>
+  <version>1.1.3</version>
+  <versioning>
+    <versions>
+      <version>1.1.3</version>
+      <version>1.2.4</version>
+      <version>1.2.5</version>
+      <version>1.2.6</version>
+      <version>1.2.7</version>
+      <version>1.2.8</version>
+      <version>1.2.11</version>
+      <version>1.2.9</version>
+      <version>1.2.12</version>
+    </versions>
+  </versioning>
+</metadata>
+
+---------------------------------------------------------------------------------------------
+
+A partir de este archivo, podemos ver que la groupId que queremos es "log4j" y el artifactId es "log4j". Vemos un montón de diferentes valores de versión para elegir, por ahora, vamos a utilizar la última versión, 1.2.12 (algunos archivos maven-metadata.xml también pueden especificar qué versión es la versión actual). Junto con el archivo maven-metadata.xml, podemos ver un directorio que corresponde a cada versión de la biblioteca log4j. Dentro de cada uno de ellos, vamos a encontrar el archivo jar real (por ejemplo, log4j-1.2.12.jar), así como un archivo de pom (este es el pom.xml de la dependencia, lo que indica cualquier otra dependencia que pudiera tener y otra información ) y otro archivo maven-metadata.xml. También hay un archivo md5 correspondientes a cada una de ellas, que contiene un hash MD5 para estos archivos. Usted puede usar esto para autenticar la biblioteca o de averiguar qué versión de una biblioteca particular, puede que esté utilizando ya.
+
+Ahora que sabemos que la información que necesitamos, podemos añadir la dependencia a nuestro pom.xml:
+
+---------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.12</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
+
+
+---------------------------------------------------------------------------------------------
+
+Ahora, cuando se compila el proyecto (mvn compile), veremos Maven descarga la dependencia log4j para nosotros.
+
+
+
+ 12.- ¿Cómo puedo implementar mi JARen mi repositorio remoto?
+
+Para el despliegue de JARS para un repositorio externo, tiene que configurar la URL del repositorio en el pom.xml y la información de autenticación para connectiong en el repositorio en el settings.xml.
+
+Aquí hay un ejemplo usando scp y autenticación de usuario / contraseña:
+
+---------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <filters>
+      <filter>src/main/filters/filters.properties</filter>
+    </filters>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+  <!--
+   |
+   |
+   |
+   -->
+  <distributionManagement>
+    <repository>
+      <id>mycompany-repository</id>
+      <name>MyCompany Repository</name>
+      <url>scp://repository.mycompany.com/repository/maven2</url>
+    </repository>
+  </distributionManagement>
+</project>
+
+---------------------------------------------------------------------------------------------
+
+SETTINGS.XML 
+
+---------------------------------------------------------------------------------------------
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  ...
+  <servers>
+    <server>
+      <id>mycompany-repository</id>
+      <username>jvanzyl</username>
+      <!-- Default value is ~/.ssh/id_dsa -->
+      <privateKey>/path/to/identity</privateKey> (default is ~/.ssh/id_dsa)
+      <passphrase>my_key_passphrase</passphrase>
+    </server>
+  </servers>
+  ...
+
+---------------------------------------------------------------------------------------------
+
+Tenga en cuenta que si se conecta a un servidor ssh openssh que tiene el parámetro "PasswordAuthentication" seleccionar "no" en el sshd_confing, usted tendrá que escribir la contraseña cada vez para la autenticación de nombre de usuario / contraseña (aunque se puede iniciar sesión con otra ssh cliente escribiendo el nombre de usuario y contraseña). Es posible que desee cambiar a la autenticación de clave pública en este caso.
+
+Se debe tener cuidado si se utilizan contraseñas en settings.xml. Para obtener más información, consulte Cifrado de clave.
+
+
+
+ingles 
+
+Note that if you are connecting to an openssh ssh server which has the parameter "PasswordAuthentication" set to "no" in the sshd_confing, you will have to type your password each time for username/password authentication (although you can log in using another ssh client by typing in the username and password). You might want to switch to public key authentication in this case.
+
+Care should be taken if using passwords in settings.xml. For more information, see Password Encryption.
+
+13.- 
+¿Cómo puedo crear documentación?
+
+Para conseguir que saltar empezar con el sistema de documentación de Maven puede utilizar el mecanismo de arquetipo para generar un sitio para su proyecto existente con el siguiente comando:
+
+
+---------------------------------------------------------------------------------------------
+mvn archetype:generate \
+  -DarchetypeGroupId=org.apache.maven.archetypes \
+  -DarchetypeArtifactId=maven-archetype-site \
+  -DgroupId=com.mycompany.app \
+  -DartifactId=my-app-site
+---------------------------------------------------------------------------------------------
+
+Ahora dirígete a la Guía para la creación de un sitio para aprender a crear la documentación del proyecto.
+
+
+14.- 
+¿Cómo puedo crear otro tipo de proyectos?
+
+Tenga en cuenta que el ciclo de vida se aplica a cualquier tipo de proyecto. Por ejemplo, ya en el directorio base podemos crear una aplicación web simple:
+---------------------------------------------------------------------------------------------
+
+mvn archetype:generate \
+    -DarchetypeGroupId=org.apache.maven.archetypes \
+    -DarchetypeArtifactId=maven-archetype-webapp \
+    -DgroupId=com.mycompany.app \
+    -DartifactId=my-webapp
+---------------------------------------------------------------------------------------------
+
+Tenga en cuenta que estos deben estar todos en una sola línea. Esto creará un directorio llamado mi-webapp que contiene el descriptor siguiente proyecto:
+
+
+---------------------------------------------------------------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-webapp</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>my-webapp</finalName>
+  </build>
+</project>
+
+
+
+---------------------------------------------------------------------------------------------
+
+
+
+
+Tenga en cuenta el elemento <packaging> - esto le dice a Maven para construir un WAR. Cambie al directorio del proyecto de aplicación web y probar:
+
+
+-------------[mvn clean package]
+
+
+Verás destino / my-webapp.war se construye, y que se ejecutaron todos los pasos normales.
+
+---------------------------------------------------------------------------------------------
+
++- pom.xml
++- my-app
+| +- pom.xml
+| +- src
+|   +- main
+|     +- java
++- my-webapp
+| +- pom.xml
+| +- src
+|   +- main
+|     +- webapp
+
+
+---------------------------------------------------------------------------------------------
+
+El fichero POM crearás debe contener lo siguiente:
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>my-app</module>
+    <module>my-webapp</module>
+  </modules>
+</project>
+
+
+Vamos a necesitar una dependencia en el JAR de la aplicación web, por lo que a esto se suma my-webapp/pom.xml:
+
+---------------------------------------------------------------------------------------------
+
+...
+  <dependencies>
+    <dependency>
+      <groupId>com.mycompany.app</groupId>
+      <artifactId>my-app</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    ...
+  </dependencies>
+
+
+---------------------------------------------------------------------------------------------
+
+Por último, agregue el siguiente elemento <parent> al tanto de los otros archivos pom.xml en los subdirectorios:
+
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>com.mycompany.app</groupId>
+    <artifactId>app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  ...
+
+---------------------------------------------------------------------------------------------
+
+Ahora, probarlo ... desde el directorio de nivel superior, ejecute:
+
+-----------------[ mvn clean install ]
+
+
+el war ha sido creada en my-webapp/target/my-webapp.war y el JAR se incluye:
+
+$ jar tvf my-webapp/target/my-webapp-1.0-SNAPSHOT.war
+   0 Fri Jun 24 10:59:56 EST 2005 META-INF/
+ 222 Fri Jun 24 10:59:54 EST 2005 META-INF/MANIFEST.MF
+   0 Fri Jun 24 10:59:56 EST 2005 META-INF/maven/
+   0 Fri Jun 24 10:59:56 EST 2005 META-INF/maven/com.mycompany.app/
+   0 Fri Jun 24 10:59:56 EST 2005 META-INF/maven/com.mycompany.app/my-webapp/
+3239 Fri Jun 24 10:59:56 EST 2005 META-INF/maven/com.mycompany.app/my-webapp/pom.xml
+   0 Fri Jun 24 10:59:56 EST 2005 WEB-INF/
+ 215 Fri Jun 24 10:59:56 EST 2005 WEB-INF/web.xml
+ 123 Fri Jun 24 10:59:56 EST 2005 META-INF/maven/com.mycompany.app/my-webapp/pom.properties
+  52 Fri Jun 24 10:59:56 EST 2005 index.jsp
+   0 Fri Jun 24 10:59:56 EST 2005 WEB-INF/lib/
+2713 Fri Jun 24 10:59:56 EST 2005 WEB-INF/lib/my-app-1.0-SNAPSHOT.jar
+
+
+
+
+
+¿Cómo funciona esto? En primer lugar, el padre creado POM (llamado aplicación), tiene un embalaje de pom y una lista de módulos definidos. Esto le indica a Maven para ejecutar todas las operaciones sobre el conjunto de proyectos en lugar de la actual (para anular este comportamiento, puede utilizar la opción - línea de comandos no recursiva).
+
+A continuación, le decimos al WAR que requiere el JAR mi-app. Esto hace un par de cosas: que lo pone a disposición en la ruta de clase de cualquier código en el WAR (ninguno en este caso), se asegura el JAR se construye siempre antes de la guerra, e indica al plugin WAR para incluir el JAR en el directorio de la biblioteca.
+
+Usted puede haber notado que junit-3.8.1.jar era una dependencia, pero no terminó en la guerra. La razón de esto es la prueba <scope> </ alcance> Elemento - solo se requiere para la prueba, por lo que no se incluye en la aplicación web como el tiempo de compilación dependencia mi-app es.
+
+El último paso fue incluir una definición padres. Esto es diferente al elemento extend usted puede estar familiarizado con el de Maven 1.0: esto asegura que el POM siempre se puede encontrar, incluso si el proyecto se distribuye por separado de sus padres al mirar hacia arriba en el repositorio.
+
+A diferencia de Maven 1.0, no es necesario que ejecute instalar para realizar con éxito estas medidas - puede ejecutar paquete por sí mismo y los artefactos en el reactor se puede utilizar desde los directorios de destino en lugar del repositorio local.
+
+Si quieres puedes generar su espacio de trabajo IDEA de nuevo desde el directorio de nivel superior ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
