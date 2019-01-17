@@ -1,0 +1,45 @@
+CREAR ESTRUCTURA PROYECTO
+mvn archetype:generate -DgroupId=edu.escuelaing.arem.ASE.app -DartifactId=TareaMVNGIT -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+
+EXEC:
+java -cp target/TareaMVNGIT-1.0-SNAPSHOT.jar edu.escuelaing.arem.ASE.app.App
+
+LIMPIAR, COPIAR DEPENDENCIAS Y EMPAQUETAR
+mvn clean dependency:copy-dependencies package
+
+GENERAR DOCUMENTACION (JAVADOC)
+- Poner en POM
+<reporting>
+  <plugins>
+  <plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-javadoc-plugin</artifactId>
+  <version>2.10.1</version>
+  <configuration>
+  </configuration>
+  </plugin>
+  </plugins>
+  </reporting>
+
+mvn javadoc:javadoc
+mvn javadoc:jar
+mvn javadoc:aggregate
+mvn javadoc:aggregate-jar
+mvn javadoc:test-javadoc
+mvn javadoc:test-jar
+mvn javadoc:test-aggregate
+mvn javadoc:test-aggregate-jar
+
+GIT:
+1. Guardar localmente
+2. Set as staged
+3. Commited
+
+CREATE USERNAME:
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+git config --global core.editor emacs
+
+REVISAR USUARIO
+git config --list
